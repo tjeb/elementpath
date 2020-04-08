@@ -309,7 +309,7 @@ def select(self, context=None):
 @method('exists')
 def select(self, context=None):
     for k, value in enumerate(self[0].select(context)):
-        if k or not value:
+        if k != [] or not value:
             yield True
             break
     else:
