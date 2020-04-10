@@ -247,6 +247,12 @@ class XPath2ParserTest(test_xpath1_parser.XPath1ParserTest):
         self.check_value("4 gt ()")
         self.check_value("() eq ()")  # Equality of empty sequences is also an empty sequence
 
+    def test_comparison_in_expression(self):
+        expr = "/*[1 = 1] = (. = 'false')"
+        root_token = self.parser.parse(expr)
+        context = XPathContext(self.etree.XML('<value>false</value>'))
+        self.assertTrue(root_token.evaluate(context=context), expr)
+
     def test_comparison_of_sequences(self):
         super(XPath2ParserTest, self).test_comparison_of_sequences()
 
@@ -694,7 +700,7 @@ class XPath2ParserTest(test_xpath1_parser.XPath1ParserTest):
                   <xs:element name="root">
                     <xs:complexType>
                       <xs:sequence/>
-                      <xs:attribute name="a" type="xs:integer"/>      
+                      <xs:attribute name="a" type="xs:integer"/>
                       <xs:attribute name="b" type="xs:integer"/>
                     </xs:complexType>
                   </xs:element>
@@ -712,7 +718,7 @@ class XPath2ParserTest(test_xpath1_parser.XPath1ParserTest):
                 self.assertTrue(root_token.evaluate(context=context) is True)
                 context = XPathContext(self.etree.XML('<root b="0"/>'))
                 self.assertTrue(root_token.evaluate(context=context) is True)
-    
+
     def test_element_decimal_cast(self):
         root = self.etree.XML('''
         <books>
@@ -724,7 +730,7 @@ class XPath2ParserTest(test_xpath1_parser.XPath1ParserTest):
         self.assertEqual(3, len(select(root, "//book")))
         for book in iter_select(root, "//book"):
             context = XPathContext(root=root, item=book)
-            
+
             root_token = self.parser.parse("xs:decimal(price)")
             self.assertEqual(expected_values.pop(0), root_token.evaluate(context))
 

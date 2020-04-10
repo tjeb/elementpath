@@ -258,7 +258,7 @@ class XPath1ParserTest(xpath_test_class.XPathTestCase):
             <tst:B1 b1="beta1"/>
             <tst:B2/>
             <tst:B3 b2="tst:beta2" b3="beta3"/>
-            <tst:B2/>            
+            <tst:B2/>
         </A>""")
 
         # Prefix references
@@ -289,7 +289,7 @@ class XPath1ParserTest(xpath_test_class.XPathTestCase):
             <tst:B1 b1="beta1"/>
             <tst:B2/>
             <tst:B3 b2="tst:beta2" b3="beta3"/>
-            <tst:B2/>            
+            <tst:B2/>
         </A>""")
 
         self.parser.strict = False
