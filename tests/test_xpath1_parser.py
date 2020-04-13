@@ -931,11 +931,12 @@ class XPath1ParserTest(xpath_test_class.XPathTestCase):
 
     def test_context_variables(self):
         root = self.etree.XML('<A><B1><C/></B1><B2/><B3><C1/><C2/></B3></A>')
-        context = XPathContext(root, variables={'alpha': 10, 'id': '19273222'})
+        context = XPathContext(root, variables={'alpha': 10, 'id': '19273222', 'name': 'Foo'})
         self.check_value("$alpha", None)  # Do not raise if the dynamic context is None
         self.check_value("$alpha", 10, context=context)
         self.check_value("$beta", NameError, context=context)
-        self.check_value("$id", '19273222', context=context)
+        self.check_value("$id", 19273222, context=context)
+        self.check_value("$name", 'Foo', context=context)
         self.wrong_syntax("$id()")
 
     def test_path_step_operator(self):

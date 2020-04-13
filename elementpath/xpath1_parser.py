@@ -412,16 +412,39 @@ def nud(self):
         self[0].wrong_syntax("variable reference requires a simple reference name")
     return self
 
+# The variable may have expanded into a new expression, which in turn could
+# contain variables, but it might also just be a plain data string
+# If it is not a string, return the variable expansion directly,
+# if it is, *try* to parse it, but just return the string if that
+# fails
+def evaluate_variable_value(self, value, context=None):
+    if type(value) != str:
+        return value
+    try:
+        parsed_variable_result = self.parser.parse(value)
+        if context is not None:
+            context = context.copy()
+        result = parsed_variable_result.evaluate(context)
+        if result == []:
+            return value
+        else:
+            return result
+    except ElementPathSyntaxError:
+        return value
 
 @method('$')
 def evaluate(self, context=None):
     varname = self[0].value
     if varname in self.parser.variables:
-        return self.parser.variables[varname]
+        value = self.parser.variables[varname]
+        result = evaluate_variable_value(self, value, context)
+        return result
     elif context is None:
         return
     elif varname in context.variables:
-        return context.variables[varname]
+        value = context.variables[varname]
+        result = evaluate_variable_value(self, value, context)
+        return result
     elif isinstance(context, XPathSchemaContext):
         return
     else:

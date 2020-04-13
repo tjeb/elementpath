@@ -282,6 +282,19 @@ class XPath2ParserTest(test_xpath1_parser.XPath1ParserTest):
         self.check_value("sum(//price[../available = true()])", 20, context)
         self.check_value("sum(//price[../available = false()])", 10, context)
 
+    def test_nested_variable_expressions(self):
+        variables = {
+                        'hasBook': 'exists(//book)',
+                        'noPrice': 'not(exists(//price))',
+                        'freeBook': '$hasBook and $noPrice',
+                        'recurse': 'not($recurse)'
+                    }
+        xml_doc = self.etree.XML('<collection><book><title>Foo</title></book></collection>')
+        context = XPathContext(xml_doc, variables=variables)
+        self.check_value("$hasBook", True, context=context)
+        self.check_value("$noPrice", True, context=context)
+        self.check_value("$freeBook", True, context=context)
+        #self.check_value("$recurse", True, context=context)
 
 
     def test_comparison_of_sequences(self):
