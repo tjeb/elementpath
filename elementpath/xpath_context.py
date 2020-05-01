@@ -46,9 +46,18 @@ class XPathContext(object):
 
         self.root = root
         if item is not None:
+            # item is the current context item
             self.item = item
+            # Additional member to support XSLT extensions such as the current()
+            # function.
+            # In outermost expressions, this is the same as '.', but within square brackets,
+            # . and current() differ, so there is a need to differentiate between the
+            # context item and the current item
+            # copy() does *not* change the current item
+            self.current_item = item
         else:
             self.item = root if hasattr(root, 'tag') else None
+            self.current_item = None
 
         self.position = position
         self.size = size
@@ -85,6 +94,8 @@ class XPathContext(object):
             obj.item = None
         obj._elem = self._elem
         obj._parent_map = self._parent_map
+        # Explicitely keep the current item the same as that of the original context
+        obj.current_item = self.current_item
         return obj
 
     def copy(self, clear_axis=True):
